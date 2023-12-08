@@ -3,7 +3,7 @@ const Expense = require("../models/Expense");
 // Get all expenses for a user
 exports.getAllExpenses = async (req, res) => {
   try {
-    const userId = req.userId; // Extracted from middleware
+    const userId = req.userId;
     const expenses = await Expense.find({ user: userId }).sort({ date: -1 });
     res.status(200).json(expenses);
   } catch (error) {
@@ -16,12 +16,14 @@ exports.getAllExpenses = async (req, res) => {
 exports.addExpense = async (req, res) => {
   try {
     const { description, amount } = req.body;
-    const userId = req.userId; // Extracted from middleware
+    const userId = req.userId;
 
     const newExpense = new Expense({ description, amount, user: userId });
     await newExpense.save();
 
-    res.status(201).json({ message: "Expense added successfully" });
+    res
+      .status(201)
+      .json({ message: "Expense added successfully", id: newExpense._id });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
