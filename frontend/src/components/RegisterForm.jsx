@@ -1,19 +1,26 @@
 import { useState } from "react";
 import axios from "axios";
-import { useHistory } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function RegisterForm() {
-  const history = useHistory();
+  const { login, user } = useAuth();
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  if (user) {
+    return <Navigate to='/' />;
+  }
+
   const handleRegister = async () => {
     try {
-      await axios.post("http://localhost:5000/api/auth/register", {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
         email,
         password,
       });
-      history.push("/login");
+      navigate("/login");
     } catch (error) {
       console.error(error);
     }
@@ -38,7 +45,7 @@ function RegisterForm() {
       />
       <button
         onClick={handleRegister}
-        className='bg-green-500 text-white p-2 rounded'
+        className='bg-indigo-500 text-white p-2 rounded'
       >
         Register
       </button>

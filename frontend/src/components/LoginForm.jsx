@@ -1,20 +1,32 @@
 import { useState } from "react";
 import axios from "axios";
-import { useHistory } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function LoginForm() {
-  const history = useHistory();
+  const { login, user } = useAuth();
+
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  if (user) {
+    return <Navigate to='/' />;
+  }
 
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        { email, password }
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        {
+          email,
+          password,
+        }
       );
-      localStorage.setItem("token", response.data.token);
-      history.push("/dashboard");
+      const { token } = response.data;
+      document.cookie = `monefijwt=${token}; path=/`;
+      login(token);
+      navigate("/");
     } catch (error) {
       console.error(error);
     }
@@ -39,7 +51,7 @@ function LoginForm() {
       />
       <button
         onClick={handleLogin}
-        className='bg-blue-500 text-white p-2 rounded'
+        className='bg-indigo-500 text-white p-2 rounded'
       >
         Login
       </button>

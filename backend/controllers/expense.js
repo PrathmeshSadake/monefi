@@ -12,6 +12,23 @@ exports.getAllExpenses = async (req, res) => {
   }
 };
 
+exports.getExpense = async (req, res) => {
+  try {
+    const expenseId = req.params.id;
+
+    const expense = await Expense.findById(expenseId);
+
+    if (!expense) {
+      return res.status(404).json({ error: "Expense not found" });
+    }
+
+    res.status(200).json(expense);
+  } catch (error) {
+    console.error("Error fetching expense details:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 // Add new expense
 exports.addExpense = async (req, res) => {
   try {
