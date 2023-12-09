@@ -4,7 +4,7 @@ import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function RegisterForm() {
-  const { login, user } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -16,7 +16,7 @@ function RegisterForm() {
 
   const handleRegister = async () => {
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, {
         email,
         password,
       });

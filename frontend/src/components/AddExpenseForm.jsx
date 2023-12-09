@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const AddExpenseForm = () => {
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
-
+  const navigate = useNavigate();
   const handleAdd = async () => {
     try {
       const token = document.cookie
@@ -24,13 +25,9 @@ const AddExpenseForm = () => {
           },
         }
       );
-
-      if (response.status === 201) {
-        setDescription("");
-        setAmount("");
-      } else {
-        console.error("Failed to add expense");
-      }
+      navigate("/");
+      setDescription("");
+      setAmount("");
     } catch (error) {
       console.error("Error during add expense:", error);
     }

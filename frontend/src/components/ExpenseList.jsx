@@ -6,35 +6,55 @@ import axios from "axios";
 const ExpenseList = () => {
   const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
-
-  useEffect(() => {
-    const fetchExpenses = async () => {
-      try {
-        const token = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("monefijwt="))
-          ?.split("=")[1];
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/expenses`,
-          {
-            headers: {
-              authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (response.status === 200) {
-          setExpenses(response.data);
-        } else {
-          console.error("Failed to fetch expenses");
+  const fetchExpenses = async () => {
+    try {
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("monefijwt="))
+        ?.split("=")[1];
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/expenses`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
         }
-      } catch (error) {
-        console.error("Error during fetch expenses:", error);
-      }
-    };
+      );
 
+      if (response.status === 200) {
+        setExpenses(response.data);
+      } else {
+        console.error("Failed to fetch expenses");
+      }
+    } catch (error) {
+      console.error("Error during fetch expenses:", error);
+    }
+  };
+  useEffect(() => {
     fetchExpenses();
   }, []);
+
+  const onDelete = async (expenseId) => {
+    try {
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("monefijwt="))
+        ?.split("=")[1];
+      const response = await axios.delete(
+        `${import.meta.env.VITE_API_URL}/expenses/${expenseId}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      fetchExpenses();
+      navigate("/");
+    } catch (error) {
+      console.error("Error during update expense:", error);
+    }
+  };
 
   return (
     <div className='w-full p-6 bg-white rounded-md shadow-md'>
@@ -56,7 +76,7 @@ const ExpenseList = () => {
                 Edit
               </button>
               <button
-                // onClick={() => onDelete(expense.id)}
+                onClick={() => onDelete(expense._id)}
                 className='bg-red-500 text-white px-2 py-1 rounded-md'
               >
                 Delete
